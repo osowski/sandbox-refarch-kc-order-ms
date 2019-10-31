@@ -5,6 +5,8 @@ on:
       - 'order-command-ms/**'
 env:
   WORKDIR: order-command-ms
+  DOCKERFILE: Dockerfile.multistage
+  IMAGE_NAME: osowski/eda-order-command-ms
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,25 +26,10 @@ jobs:
         echo "Getting latest version: $(cat $WORKDIR/VERSION)"
     - name: Build the Docker image
       run: |
-        echo $DOCKERFILE
-        echo $WORKDIR
-        echo "docker login -u ${DOCKER_U} -p ..."
         docker login -u ${DOCKER_U} -p ${DOCKER_P}
-        echo "cd ${WORKDIR}"
         cd ${WORKDIR}
-        echo "docker build . --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat VERSION)"
         docker build . --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat VERSION)
+        docker push ${IMAGE_NAME}:$(cat VERSION)
       env:
-        IMAGE_NAME: osowski/eda-order-command-ms
         DOCKER_U: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_P: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKERFILE: Dockerfile.multistage
-        WORKDIR: ${{ env.WORKDIR }}
-    #- name: Publish to Registry
-    #  uses: elgohr/Publish-Docker-Github-Action@master
-    #  with:
-    #    name: osowski/eda-order-command-ms:$(cat $WORKDIR/VERSION)
-    #    username: ${{ secrets.DOCKER_USERNAME }}
-    #    password: ${{ secrets.DOCKER_PASSWORD }}
-    #    dockerfile: Dockerfile.multistage
-    #    workdir: ${{ env.WORKDIR }}
