@@ -10,22 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - name: Get previous version
+      run: |
+        echo "Getting previous version: $(cat $WORKDIR/VERSION)"
     - name: Bump Versions
       uses: remorses/bump-version@js
       env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        version_file: $WORKDIR/VERSION
+        version_file: ${{ env.WORKDIR }}/VERSION
     - name: Get latest version
       run: |
         echo "Getting latest version: $(cat $WORKDIR/VERSION)"
-    #- name: Build the Docker image
-    #  run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+    - name: Build the Docker image
+      run: |
+        echo $DOCKERFILE
+        echo $WORKDIR
+        docker login -u ${DOCKER_U} -p ${DOCKER_P}
+        #docker build ${WORKDIR} --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(date +%s)
+        docker build ${WORKDIR} --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat $WORKDIR/VERSION)
       with:
-        name: osowski/eda-order-command-ms:$(cat $WORKDIR/VERSION)
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        dockerfile: Dockerfile.multistage
-        workdir: ${{ env.WORKDIR }}
+        IMAGE_NAME: osowski/eda-order-command-ms
+        DOCKER_U: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_P: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKERFILE: Dockerfile.multistage
+        WORKDIR: ${{ env.WORKDIR }}
+    #- name: Publish to Registry
+    #  uses: elgohr/Publish-Docker-Github-Action@master
+    #  with:
+    #    name: osowski/eda-order-command-ms:$(cat $WORKDIR/VERSION)
+    #    username: ${{ secrets.DOCKER_USERNAME }}
+    #    password: ${{ secrets.DOCKER_PASSWORD }}
+    #    dockerfile: Dockerfile.multistage
+    #    workdir: ${{ env.WORKDIR }}
