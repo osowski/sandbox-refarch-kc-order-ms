@@ -3,16 +3,29 @@ on:
   push:
     paths:
       - 'order-command-ms/**'
+env:
+  WORKDIR: order-command-ms
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - name: Bump Versions
+      uses: remorses/bump-version@js
+      env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        version_file: $WORKDIR/VERSION
+    - name: Get latest version
+      run: |
+        echo "Getting latest version: $(cat $WORKDIR/VERSION)"
+    #- name: Build the Docker image
+    #  run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: ibmcase/kcontainer-order-command-ms
+        name: osowski/eda-order-command-ms:$(cat $WORKDIR/VERSION)
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         dockerfile: Dockerfile.multistage
-        workdir: order-command-ms
+        workdir: $WORKDIR
