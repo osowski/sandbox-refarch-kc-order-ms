@@ -31,7 +31,7 @@ jobs:
         echo "cd ${WORKDIR}"
         cd ${WORKDIR}
         echo "docker build . --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat VERSION)"
-        docker build ${WORKDIR} --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat VERSION)
+        docker build . --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat VERSION)
       env:
         IMAGE_NAME: osowski/eda-order-command-ms
         DOCKER_U: ${{ secrets.DOCKER_USERNAME }}
