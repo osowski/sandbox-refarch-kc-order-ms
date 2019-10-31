@@ -26,8 +26,11 @@ jobs:
       run: |
         echo $DOCKERFILE
         echo $WORKDIR
+        echo "docker login -u ${DOCKER_U} -p ..."
         docker login -u ${DOCKER_U} -p ${DOCKER_P}
-        #docker build ${WORKDIR} --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(date +%s)
+        echo "cd ${WORKDIR}"
+        cd ${WORKDIR}
+        echo "docker build . --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat $WORKDIR/VERSION)"
         docker build ${WORKDIR} --file ${DOCKERFILE} --tag ${IMAGE_NAME}:$(cat $WORKDIR/VERSION)
       env:
         IMAGE_NAME: osowski/eda-order-command-ms
