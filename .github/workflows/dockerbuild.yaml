@@ -23,7 +23,7 @@ jobs:
     env:
       WORKDIR: order-command-ms
       DOCKERFILE: Dockerfile.multistage
-      IMAGE_NAME: ibmcase/kcontainer-order-command-ms
+      IMAGE_NAME: osowski/eda-order-command-ms
     steps:
     - uses: actions/checkout@master
     - name: Build the Docker image
@@ -43,7 +43,7 @@ jobs:
     env:
       WORKDIR: order-query-ms
       DOCKERFILE: Dockerfile.multistage
-      IMAGE_NAME: ibmcase/kcontainer-order-query-ms
+      IMAGE_NAME: osowski/eda-order-query-ms
     steps:
     - uses: actions/checkout@master
     - name: Build the Docker image
